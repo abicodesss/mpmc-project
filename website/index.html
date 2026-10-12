@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f4f9f1" />
+  <title>Uzhavan Calc — Smart Irrigation Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <nav class="nav" aria-label="Main navigation">
+    <a class="logo" href="#top" aria-label="Uzhavan Calc home"><span aria-hidden="true">🌾</span> Uzhavan Calc</a>
+    <div class="nav-actions">
+      <button id="languageBtn" class="icon-btn language-btn" type="button" aria-label="Switch language to Tamil">தமிழ்</button>
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </nav>
+
+  <header id="top" class="hero">
+    <div class="hero-content">
+      <span class="eyebrow" data-i18n="heroEyebrow">FIELD-READY WATER PLANNING</span>
+      <h1 data-i18n="heroTitle">Grow more.<br />Water wisely.</h1>
+      <p data-i18n="heroSubtitle">A clear daily irrigation estimate, guided by your crop, weather and field sensors.</p>
+      <a href="#calculator" id="startLink" class="cta" data-i18n="start">Start calculating <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="hero-art" aria-hidden="true"><span>🌱</span><span>💧</span><span>☀️</span></div>
+  </header>
+
+  <main id="calculator" class="dashboard">
+    <section class="card field-card" aria-labelledby="fieldHeading">
+      <div class="section-heading">
+        <div><span class="eyebrow" data-i18n="stepOne">STEP 01</span><h2 id="fieldHeading" data-i18n="fieldDetails">Field details</h2></div>
+        <span id="cropEmoji" class="crop-emoji" aria-hidden="true">🌾</span>
+      </div>
+      <div class="field-control">
+        <label for="crop" data-i18n="crop">Crop</label>
+        <select id="crop" name="crop"></select>
+      </div>
+      <div class="field-control">
+        <span class="control-label" id="stageLabel" data-i18n="growthStage">Growth stage</span>
+        <div id="stageStepper" class="stage-stepper" role="group" aria-labelledby="stageLabel">
+          <button type="button" data-stage="Seedling" aria-pressed="false" data-i18n="seedling">Seedling</button>
+          <button type="button" data-stage="Vegetative" aria-pressed="true" data-i18n="vegetative">Vegetative</button>
+          <button type="button" data-stage="Flowering" aria-pressed="false" data-i18n="flowering">Flowering</button>
+          <button type="button" data-stage="Fruiting" aria-pressed="false" data-i18n="fruiting">Fruiting</button>
+        </div>
+        <input id="stage" type="hidden" value="Vegetative" />
+      </div>
+      <div class="slider-control">
+        <div class="slider-title"><label for="area" data-i18n="fieldArea">Field area</label><span class="unit-label">m²</span></div>
+        <div class="range-row">
+          <input id="areaRange" type="range" min="1" max="100000" step="1" value="1000" aria-label="Field area slider" />
+          <div class="number-wrap"><input id="area" type="number" min="1" max="100000" step="1" value="1000" placeholder=" " required aria-describedby="areaError" /><span>m²</span></div>
+        </div>
+        <small class="field-error" id="areaError"></small>
+      </div>
+      <div class="slider-control">
+        <div class="slider-title"><label for="eff" data-i18n="efficiency">Irrigation efficiency</label><span id="effValue" class="value-pill">75%</span></div>
+        <div class="range-row">
+          <input id="effRange" type="range" min="0.1" max="1" step="0.01" value="0.75" aria-label="Irrigation efficiency slider" />
+          <div class="number-wrap"><input id="eff" type="number" min="0.1" max="1" step="0.01" value="0.75" placeholder=" " required aria-describedby="effError" /><span>×</span></div>
+        </div>
+        <small class="field-error" id="effError"></small>
+      </div>
+    </section>
+
+    <section class="card sensor-card" aria-labelledby="sensorHeading">
+      <div class="section-heading">
+        <div><span class="eyebrow" data-i18n="stepTwo">STEP 02</span><h2 id="sensorHeading" data-i18n="sensorData">Field sensors</h2></div>
+        <span id="sensorStatus" class="status-badge offline"><span class="status-dot"></span><span id="sensorStatusText" data-i18n="offline">Offline</span></span>
+      </div>
+      <p id="sensorMessage" class="helper-copy" data-i18n="sensorManual">Manual readings are active. Connect your ESP32 or enter values below.</p>
+      <div class="gauge-grid">
+        <div class="gauge-tile" data-state="dry">
+          <div class="gauge-head"><span aria-hidden="true">💧</span><span class="gauge-value" id="moistureValue">35%</span></div>
+          <label for="moisture" data-i18n="soilMoisture">Soil moisture</label>
+          <input id="moisture" type="number" min="0" max="100" value="35" step="any" aria-describedby="moistureError" />
+          <div class="gauge-track" aria-hidden="true"><div id="moistureBar" class="gauge-fill"></div></div>
+          <small class="field-error" id="moistureError"></small>
+        </div>
+        <div class="gauge-tile" data-state="optimal">
+          <div class="gauge-head"><span aria-hidden="true">🌡️</span><span class="gauge-value" id="tempValue">30°C</span></div>
+          <label for="temp" data-i18n="temperature">Temperature</label>
+          <input id="temp" type="number" value="30" step="any" aria-describedby="tempError" />
+          <div class="gauge-track" aria-hidden="true"><div id="tempBar" class="gauge-fill"></div></div>
+          <small class="field-error" id="tempError"></small>
+        </div>
+        <div class="gauge-tile" data-state="optimal">
+          <div class="gauge-head"><span aria-hidden="true">☁️</span><span class="gauge-value" id="humValue">65%</span></div>
+          <label for="hum" data-i18n="humidity">Humidity</label>
+          <input id="hum" type="number" min="0" max="100" value="65" step="any" aria-describedby="humError" />
+          <div class="gauge-track" aria-hidden="true"><div id="humBar" class="gauge-fill"></div></div>
+          <small class="field-error" id="humError"></small>
+        </div>
+      </div>
+      <label class="field-label" for="espUrl" data-i18n="espUrl">ESP32 endpoint</label>
+      <div class="sensor-connect-row">
+        <input id="espUrl" type="url" value="http://192.168.1.50/data" autocomplete="url" />
+        <button id="btnSensor" class="btn btn-secondary" type="button"><span class="button-spinner" aria-hidden="true"></span><span data-i18n="readSensor">Read sensor</span></button>
+      </div>
+      <div class="sensor-footer">
+        <label class="toggle-control"><input id="autoRefresh" type="checkbox" /><span class="toggle-switch" aria-hidden="true"></span><span data-i18n="autoRefresh">Auto-refresh · 5s</span></label>
+        <span id="lastUpdated" class="last-updated" data-i18n="notUpdated">Not updated yet</span>
+      </div>
+    </section>
+
+    <section class="card weather-card" aria-labelledby="weatherHeading">
+      <div class="section-heading">
+        <div><span class="eyebrow" data-i18n="stepThree">STEP 03</span><h2 id="weatherHeading" data-i18n="weather">Weather &amp; demand</h2></div>
+        <span class="weather-symbol" id="weatherIcon" aria-hidden="true">🌤️</span>
+      </div>
+      <div class="row">
+        <div class="field-control"><label for="lat" data-i18n="latitude">Latitude</label><input id="lat" type="number" value="13.08" placeholder=" " min="-90" max="90" step="any" aria-describedby="latError" /><small class="field-error" id="latError"></small></div>
+        <div class="field-control"><label for="lon" data-i18n="longitude">Longitude</label><input id="lon" type="number" value="80.27" placeholder=" " min="-180" max="180" step="any" aria-describedby="lonError" /><small class="field-error" id="lonError"></small></div>
+      </div>
+      <div class="weather-summary">
+        <div><span id="weatherTemp" class="weather-temp">--°</span><span class="weather-caption" data-i18n="todayForecast">Today’s forecast</span></div>
+        <div><span id="rainChance" class="weather-temp small-temp">--%</span><span class="weather-caption" data-i18n="rainChance">Rain chance</span></div>
+      </div>
+      <div class="row">
+        <div class="field-control"><label for="et0" data-i18n="et0">ET₀ (mm/day)</label><input id="et0" type="number" value="5" placeholder=" " min="0" step="any" aria-describedby="et0Error" /><small class="field-error" id="et0Error"></small></div>
+        <div class="field-control"><label for="rain" data-i18n="rainfall">Rainfall (mm)</label><input id="rain" type="number" value="0" placeholder=" " min="0" step="any" aria-describedby="rainError" /><small class="field-error" id="rainError"></small></div>
+      </div>
+      <button id="btnWeather" class="btn" type="button"><span class="button-spinner" aria-hidden="true"></span><span data-i18n="getForecast">Get 7-day forecast</span></button>
+      <p id="weatherStatus" class="helper-copy" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card result-card" aria-labelledby="resultHeading">
+      <div class="result-topline"><span class="eyebrow" data-i18n="dailyEstimate">YOUR DAILY ESTIMATE</span><button id="unitToggle" class="text-button" type="button" aria-label="Switch displayed water units">L/day · m³/day</button></div>
+      <h2 id="resultHeading" data-i18n="waterRequirement">Water requirement</h2>
+      <div class="big"><span id="water" aria-live="polite" aria-atomic="true">0</span><small id="waterUnit">L/day</small></div>
+      <p class="result-metrics"><span><b id="kc">—</b><small>Kc</small></span><span class="metric-divider">×</span><span><b id="et0Result">—</b><small>ET₀</small></span><span class="metric-divider">=</span><span><b id="cwr">—</b><small data-i18n="cwr">CWR mm/day</small></span></p>
+      <p id="resultStatus" class="result-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <div class="chart-wrap"><canvas id="waterChart" role="img" aria-label="Water requirement compared with rainfall"></canvas></div>
+      <div class="result-actions"><button id="saveResult" class="btn btn-secondary" type="button" data-i18n="saveResult">Save result</button><button id="downloadReport" class="btn btn-quiet" type="button" data-i18n="downloadReport">Download report</button></div>
+    </section>
+
+    <section class="card breakdown-card" aria-labelledby="breakdownHeading">
+      <div class="section-heading"><div><span class="eyebrow" data-i18n="showYourWork">SHOW YOUR WORK</span><h2 id="breakdownHeading" data-i18n="calculationSteps">Calculation steps</h2></div><span class="breakdown-icon" aria-hidden="true">🧮</span></div>
+      <ol class="breakdown-list">
+        <li><span><b data-i18n="stepKc">Crop coefficient</b><small>Kc for selected crop and stage</small></span><strong id="stepKc">—</strong></li>
+        <li><span><b data-i18n="stepCwr">Crop water requirement</b><small>Kc × ET₀</small></span><strong id="stepCwr">—</strong></li>
+        <li><span><b data-i18n="stepRain">Effective rainfall</b><small>Rainfall, capped at CWR</small></span><strong id="stepRain">—</strong></li>
+        <li><span><b data-i18n="stepSm">Soil moisture credit</b><small>Set to 0 until calibrated (mm/day)</small></span><strong id="stepSm">0 mm</strong></li>
+        <li class="breakdown-total"><span><b data-i18n="stepFinal">Final water</b><small>A × max(CWR − SM − R, 0) ÷ E</small></span><strong id="stepWater">—</strong></li>
+      </ol>
+    </section>
+
+    <section class="recommendations" aria-label="Recommendations">
+      <article class="rec-card irrigation-card ok" id="cardIrrigation" aria-labelledby="irrigationTitle">
+        <div class="rec-heading"><span id="irrigationIcon" class="rec-icon" aria-hidden="true">💧</span><div><span class="eyebrow" data-i18n="irrigationPlan">IRRIGATION PLAN</span><h2 id="irrigationTitle" data-i18n="irrigation">Irrigation</h2></div><span id="urgencyBadge" class="urgency-badge" data-i18n="lightIrrigation">Light irrigation</span></div>
+        <p id="irrigation"></p>
+        <details><summary data-i18n="why">Why?</summary><p id="irrigationWhy"></p></details>
+      </article>
+      <article class="rec-card" id="cardPesticide" aria-labelledby="pesticideTitle">
+        <div class="rec-heading"><span class="rec-icon" aria-hidden="true">🐛</span><div><span class="eyebrow" data-i18n="fieldWatch">FIELD WATCH</span><h2 id="pesticideTitle" data-i18n="pesticide">Pest &amp; disease watch</h2></div></div>
+        <p id="pesticide"></p>
+        <details><summary data-i18n="why">Why?</summary><p id="pesticideWhy"></p></details>
+      </article>
+      <article class="rec-card" id="cardFertilizer" aria-labelledby="fertilizerTitle">
+        <div class="rec-heading"><span class="rec-icon" aria-hidden="true">🌱</span><div><span class="eyebrow" data-i18n="cropCare">CROP CARE</span><h2 id="fertilizerTitle" data-i18n="fertilizer">Fertilizer</h2></div></div>
+        <p id="fertilizer"></p>
+        <details><summary data-i18n="why">Why?</summary><p id="fertilizerWhy"></p></details>
+      </article>
+    </section>
+
+    <section class="card forecast-card" aria-labelledby="forecastHeading">
+      <div class="section-heading"><div><span class="eyebrow" data-i18n="planAhead">PLAN AHEAD</span><h2 id="forecastHeading" data-i18n="rainForecast">7-day rainfall forecast</h2></div><span aria-hidden="true">📅</span></div>
+      <div id="forecastSkeleton" class="chart-skeleton" hidden><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="chart-wrap forecast-chart-wrap"><canvas id="forecastChart" role="img" aria-label="Seven-day rainfall forecast"></canvas></div>
+      <p id="forecastStatus" class="helper-copy" role="status" aria-live="polite" data-i18n="forecastPrompt">Load the forecast to see rain by day.</p>
+    </section>
+
+    <section class="card history-card" aria-labelledby="historyHeading">
+      <div class="section-heading"><div><span class="eyebrow" data-i18n="savedPlans">SAVED PLANS</span><h2 id="historyHeading" data-i18n="recentCalculations">Recent calculations</h2></div><span aria-hidden="true">🗂️</span></div>
+      <ul id="historyList" class="history-list"></ul>
+      <p id="historyEmpty" class="helper-copy" data-i18n="historyEmpty">Your saved calculations will appear here.</p>
+    </section>
+  </main>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">↑</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <footer><span data-i18n="footer">Made for smarter, more water-wise farming</span> · Uzhavan Calc</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+  <script src="./script.js" defer></script>
+</body>
+</html>
